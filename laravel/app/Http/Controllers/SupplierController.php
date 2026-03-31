@@ -15,7 +15,10 @@ class SupplierController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
+            'supplier_name' => 'required|string|max:150',
+            'contact_person' => 'required|string|max:100',
+            'contact_number' => 'required|string|max:20',
+            'address' => 'required|string|max:255',
         ]);
 
         $supplier = Supplier::create($request->all());

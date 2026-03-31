@@ -20,17 +20,17 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
+            'product_code' => 'required|string|max:255',
+            'product_name' => 'required|string|max:255',
             'category_id' => 'nullable|exists:categories,id',
-            'price' => 'required|numeric',
-            'stock' => 'required|integer',
+            'unit' => 'required|integer',
         ]);
 
         $product = Product::create([
-            'name' => $request->name,
-            'category_id' => $request->category_id,
-            'price' => $request->price,
-            'stock' => $request->stock,
+            'product_code' => $request->name,
+            'product_name' => $request->category_id,
+            'category_id' => $request->price,
+            'unit' => $request->stock,
         ]);
 
         return response()->json($product, 201);
