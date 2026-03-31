@@ -19,7 +19,7 @@ class CategoryController extends Controller
         ]);
 
         $category = Category::create([
-            'name' => $request->name,
+            'category_name' => $request->name,
         ]);
 
         return response()->json($category, 201);
@@ -34,7 +34,7 @@ class CategoryController extends Controller
         ]);
 
         $category->update([
-            'name' => $request->name,
+            'category_name' => $request->name,
         ]);
 
         return response()->json($category);
