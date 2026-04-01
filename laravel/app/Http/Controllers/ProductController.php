@@ -9,29 +9,41 @@ class ProductController extends Controller
 {
     public function index()
     {
-        return response()->json(Product::all());
+        $products = Product::with([
+            'category',
+            'prices',
+            'currentPrice',
+            'reorderLevel',
+        ])->get();
+
+        return response()->json($products);
     }
 
     public function show($id)
     {
-        return response()->json(Product::findOrFail($id));
+        $product = Product::with([
+            'category',
+            'prices',
+            'currentPrice',
+            'purchaseItems',
+            'saleItems',
+            'stockMovements',
+            'reorderLevel',
+        ])->findOrFail($id);
+
+        return response()->json($product);
     }
 
     public function store(Request $request)
     {
-        $request->validate([
-            'product_code' => 'required|string|max:255',
-            'product_name' => 'required|string|max:255',
+        $validated = $request->validate([
+            'product_code' => 'required|string|max:50|unique:products,product_code',
+            'product_name' => 'required|string|max:150',
             'category_id' => 'nullable|exists:categories,id',
-            'unit' => 'required|integer',
+            'unit' => 'required|string|max:50',
         ]);
 
-        $product = Product::create([
-            'product_code' => $request->name,
-            'product_name' => $request->category_id,
-            'category_id' => $request->price,
-            'unit' => $request->stock,
-        ]);
+        $product = Product::create($validated);
 
         return response()->json($product, 201);
     }
@@ -40,15 +52,25 @@ class ProductController extends Controller
     {
         $product = Product::findOrFail($id);
 
-        $product->update($request->all());
+        $validated = $request->validate([
+            'product_code' => 'required|string|max:50|unique:products,product_code,' . $id,
+            'product_name' => 'required|string|max:150',
+            'category_id' => 'nullable|exists:categories,id',
+            'unit' => 'required|string|max:50',
+        ]);
+
+        $product->update($validated);
 
         return response()->json($product);
     }
 
     public function destroy($id)
     {
-        Product::findOrFail($id)->delete();
+        $product = Product::findOrFail($id);
+        $product->delete();
 
-        return response()->json(['message' => 'Product deleted successfully']);
+        return response()->json([
+            'message' => 'Product deleted successfully'
+        ]);
     }
 }
